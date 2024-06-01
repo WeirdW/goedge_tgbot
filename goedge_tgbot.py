@@ -63,7 +63,7 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 await update.message.reply_text('未获取到token。')
                 return
 
-            message = f"AccessToken：\n {token}"
+            message = f"AccessToken：\n{token}"
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
