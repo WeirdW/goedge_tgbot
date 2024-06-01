@@ -2,7 +2,7 @@ import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
-import json  # Ensure to import json
+import json
 
 # 配置日志记录
 logging.basicConfig(
@@ -81,7 +81,7 @@ async def get_ServerStatBoard(update: Update, context: ContextTypes.DEFAULT_TYPE
         return
 
     if len(context.args) != 1:
-        await update.message.reply_text('格式错误！请发送 /composeServerStatBoard <服务ID>')
+        await update.message.reply_text('格式错误！请发送 /serverid <网站ID>')
         return
 
     server_id = context.args[0]
@@ -130,7 +130,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("config", config))
     app.add_handler(CommandHandler("token", get_AccessToken))
-    app.add_handler(CommandHandler("composeServerStatBoard", get_ServerStatBoard))  # New handler
+    app.add_handler(CommandHandler("serverid", get_ServerStatBoard))
 
     app.run_polling()
 
