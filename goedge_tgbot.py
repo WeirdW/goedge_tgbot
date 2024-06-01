@@ -84,7 +84,7 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             user_edge_info[user_id]['token'] = token
             save_user_data()
 
-            message = f"AccessToken：\n{token}"
+            message = f"AccessToken：\n {token}"
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
