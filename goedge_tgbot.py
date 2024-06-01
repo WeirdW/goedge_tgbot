@@ -42,13 +42,13 @@ async def config(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
     
     api_url, user_type, accessKeyId, accessKey = context.args
-    user_id = update.message.from_user.id
+    user_id = str(update.message.from_user.id)
     user_edge_info[user_id] = {'api_url': api_url, 'type': user_type, 'accessKeyId': accessKeyId, 'accessKey': accessKey}
     save_user_data()
     await update.message.reply_text('配置成功！请使用 /token 获取AccessToken。')
 
 async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_id = update.message.from_user.id
+    user_id = str(update.message.from_user.id)
     if user_id not in user_edge_info:
         await update.message.reply_text('请先使用 /config 命令配置你的API节点。')
         return
@@ -84,7 +84,7 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             user_edge_info[user_id]['token'] = token
             save_user_data()
 
-            message = f"AccessToken：\n {token}"
+            message = f"AccessToken：\n{token}"
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
@@ -92,7 +92,7 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await update.message.reply_text(f'获取token失败，状态码：{response.status_code}，响应内容：{response.text}')
 
 async def get_ServerStatBoard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_id = update.message.from_user.id
+    user_id = str(update.message.from_user.id)
     if user_id not in user_edge_info or 'token' not in user_edge_info[user_id]:
         await update.message.reply_text('请先使用 /config 和 /token 命令配置你的API节点并获取token。')
         return
@@ -135,55 +135,14 @@ async def get_ServerStatBoard(update: Update, context: ContextTypes.DEFAULT_TYPE
                 f"当天流量：{bytes_to_mb(stats.get('dailyTrafficBytes', 0)):.2f} MB\n"
                 f"带宽百分位数：{stats.get('bandwidthPercentile', 'N/A')}\n"
             )
-
-            # Detailed breakdowns
-            if stats.get('dailyTrafficStats'):
-                message += "\n当天流量统计:\n"
-                for item in stats['dailyTrafficStats']:
-                    message += (
-                        f"日期: {item.get('day', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
-                        f"缓存流量: {bytes_to_mb(item.get('cachedBytes', 0)):.2f} MB, 请求数: {item.get('countRequests', 'N/A')}, "
-                        f"缓存请求数: {item.get('countCachedRequests', 'N/A')}, 攻击请求数: {item.get('countAttackRequests', 'N/A')}, "
-                        f"攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
-                    )
-
-            if stats.get('hourlyTrafficStats'):
-                message += "\n小时流量统计:\n"
-                for item in stats['hourlyTrafficStats']:
-                    message += (
-                        f"小时: {item.get('hour', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
-                        f"缓存流量: {bytes_to_mb(item.get('cachedBytes', 0)):.2f} MB, 请求数: {item.get('countRequests', 'N/A')}, "
-                        f"缓存请求数: {item.get('countCachedRequests', 'N/A')}, 攻击请求数: {item.get('countAttackRequests', 'N/A')}, "
-                        f"攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
-                    )
-
-            if stats.get('topNodeStats'):
-                message += "\n节点统计:\n"
-                for item in stats['topNodeStats']:
-                    message += (
-                        f"节点ID: {item.get('nodeId', 'N/A')}, 节点名称: {item.get('nodeName', 'N/A')}, "
-                        f"请求数: {item.get('countRequests', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
-                        f"攻击请求数: {item.get('countAttackRequests', 'N/A')}, 攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
-                    )
-
-            if stats.get('topCountryStats'):
-                message += "\n国家统计:\n"
-                for item in stats['topCountryStats']:
-                    message += (
-                        f"国家: {item.get('countryName', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
-                        f"请求数: {item.get('countRequests', 'N/A')}, 流量占比: {item.get('percent', 'N/A')}%, "
-                        f"攻击请求数: {item.get('countAttackRequests', 'N/A')}, 攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
-                    )
-
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
     else:
-        await update.message.reply_text(f'获取服务器统计失败，状态码：{response.status_code}，响应内容：{response.text}')
+        await update.message.reply_text(f'获取统计数据失败，状态码：{response.status_code}，响应内容：{response.text}')
 
 def main():
-    load_user_data()  # 加载用户数据
-
+    load_user_data()
     app = ApplicationBuilder().token(API_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -191,7 +150,6 @@ def main():
     app.add_handler(CommandHandler("token", get_AccessToken))
     app.add_handler(CommandHandler("serverid", get_ServerStatBoard))
 
-    logging.info("Bot started")
     app.run_polling()
 
 if __name__ == '__main__':
