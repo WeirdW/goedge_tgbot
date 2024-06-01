@@ -119,45 +119,6 @@ async def get_ServerStatBoard(update: Update, context: ContextTypes.DEFAULT_TYPE
                 f"带宽百分位数：{stats.get('bandwidthPercentile', 'N/A')}\n"
             )
 
-            # Detailed breakdowns
-            if stats.get('dailyTrafficStats'):
-                message += "\n当天流量统计:\n"
-                for item in stats['dailyTrafficStats']:
-                    message += (
-                        f"日期: {item['day']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"缓存流量: {bytes_to_mb(item['cachedBytes']):.2f} MB, 请求数: {item['countRequests']}, "
-                        f"缓存请求数: {item['countCachedRequests']}, 攻击请求数: {item['countAttackRequests']}, "
-                        f"攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
-                    )
-
-            if stats.get('hourlyTrafficStats'):
-                message += "\n小时流量统计:\n"
-                for item in stats['hourlyTrafficStats']:
-                    message += (
-                        f"小时: {item['hour']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"缓存流量: {bytes_to_mb(item['cachedBytes']):.2f} MB, 请求数: {item['countRequests']}, "
-                        f"缓存请求数: {item['countCachedRequests']}, 攻击请求数: {item['countAttackRequests']}, "
-                        f"攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
-                    )
-
-            if stats.get('topNodeStats'):
-                message += "\n节点统计:\n"
-                for item in stats['topNodeStats']:
-                    message += (
-                        f"节点ID: {item['nodeId']}, 节点名称: {item['nodeName']}, "
-                        f"请求数: {item['countRequests']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"攻击请求数: {item['countAttackRequests']}, 攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
-                    )
-
-            if stats.get('topCountryStats'):
-                message += "\n国家统计:\n"
-                for item in stats['topCountryStats']:
-                    message += (
-                        f"国家: {item['countryName']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"请求数: {item['countRequests']}, 流量占比: {item['percent']}%, "
-                        f"攻击请求数: {item['countAttackRequests']}, 攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
-                    )
-
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
