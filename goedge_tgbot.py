@@ -15,6 +15,9 @@ API_TOKEN = "7327775247:AAGB1JRnCqCVX4PYTXMYTiGx54sz-CCO-yo"
 # 在这里定义全局变量来存储用户的Goedge CDN API信息
 user_edge_info = {}
 
+def bytes_to_mb(bytes_value):
+    return bytes_value / (1024 * 1024)
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         '欢迎使用 Goedge CDN 看板查询机器人！请发送你的API节点的HTTP访问地址，用户类型(user/admin)，AccessKey ID，AccessKey密钥，格式如下：\n'
