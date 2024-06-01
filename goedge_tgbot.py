@@ -84,7 +84,7 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             user_edge_info[user_id]['token'] = token
             save_user_data()
 
-            message = f"AccessToken：\n {token}"
+            message = f"AccessToken：\n{token}"
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
@@ -133,15 +133,57 @@ async def get_ServerStatBoard(update: Update, context: ContextTypes.DEFAULT_TYPE
                 f"上个月带宽峰值：{bytes_to_mb(stats.get('lastMonthlyPeekBandwidthBytes', 0)):.2f} MB\n"
                 f"当天独立IP：{stats.get('dailyCountIPs', 'N/A')}\n"
                 f"当天流量：{bytes_to_mb(stats.get('dailyTrafficBytes', 0)):.2f} MB\n"
+                f"带宽百分位数：{stats.get('bandwidthPercentile', 'N/A')}\n"
             )
+
+            # Detailed breakdowns
+            if stats.get('dailyTrafficStats'):
+                message += "\n当天流量统计:\n"
+                for item in stats['dailyTrafficStats']:
+                    message += (
+                        f"日期: {item['day']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
+                        f"缓存流量: {bytes_to_mb(item['cachedBytes']):.2f} MB, 请求数: {item['countRequests']}, "
+                        f"缓存请求数: {item['countCachedRequests']}, 攻击请求数: {item['countAttackRequests']}, "
+                        f"攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                    )
+
+            if stats.get('hourlyTrafficStats'):
+                message += "\n小时流量统计:\n"
+                for item in stats['hourlyTrafficStats']:
+                    message += (
+                        f"小时: {item['hour']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
+                        f"缓存流量: {bytes_to_mb(item['cachedBytes']):.2f} MB, 请求数: {item['countRequests']}, "
+                        f"缓存请求数: {item['countCachedRequests']}, 攻击请求数: {item['countAttackRequests']}, "
+                        f"攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                    )
+
+            if stats.get('topNodeStats'):
+                message += "\n节点统计:\n"
+                for item in stats['topNodeStats']:
+                    message += (
+                        f"节点ID: {item['nodeId']}, 节点名称: {item['nodeName']}, "
+                        f"请求数: {item['countRequests']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
+                        f"攻击请求数: {item['countAttackRequests']}, 攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                    )
+
+            if stats.get('topCountryStats'):
+                message += "\n国家统计:\n"
+                for item in stats['topCountryStats']:
+                    message += (
+                        f"国家: {item['countryName']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
+                        f"请求数: {item['countRequests']}, 流量占比: {item['percent']}%, "
+                        f"攻击请求数: {item['countAttackRequests']}, 攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                    )
 
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
     else:
-        await update.message.reply_text(f'获取统计数据失败，状态码：{response.status_code}，响应内容：{response.text}')
+        await update.message.reply_text(f'获取服务器统计失败，状态码：{response.status_code}，响应内容：{response.text}')
 
 def main():
+    load_user_data()  # 加载用户数据
+
     app = ApplicationBuilder().token(API_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -149,6 +191,7 @@ def main():
     app.add_handler(CommandHandler("token", get_AccessToken))
     app.add_handler(CommandHandler("serverid", get_ServerStatBoard))
 
+    logging.info("Bot started")
     app.run_polling()
 
 if __name__ == '__main__':
