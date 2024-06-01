@@ -119,7 +119,6 @@ async def get_ServerStatBoard(update: Update, context: ContextTypes.DEFAULT_TYPE
                 f"上个月带宽峰值：{bytes_to_mb(stats.get('lastMonthlyPeekBandwidthBytes', 0)):.2f} MB\n"
                 f"当天独立IP：{stats.get('dailyCountIPs', 'N/A')}\n"
                 f"当天流量：{bytes_to_mb(stats.get('dailyTrafficBytes', 0)):.2f} MB\n"
-                f"带宽百分位数：{stats.get('bandwidthPercentile', 'N/A')}\n"
             )
 
             await update.message.reply_text(message)
