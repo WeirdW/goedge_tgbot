@@ -6,18 +6,18 @@ import json
 
 # 配置日志记录
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levellevel)s - %(message)s',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
 API_TOKEN = "7327775247:AAGB1JRnCqCVX4PYTXMYTiGx54sz-CCO-yo"
 
-# 在这里定义全局变量来存储用户的goedge cdn api信息
+# 在这里定义全局变量来存储用户的Goedge CDN API信息
 user_edge_info = {}
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
-        '欢迎使用 Goedge Cdn 看板查询机器人！请发送你的API节点的HTTP访问地址，用户类型(user/admin)，AccessKey ID，AccessKey密钥，格式如下：\n'
+        '欢迎使用 Goedge CDN 看板查询机器人！请发送你的API节点的HTTP访问地址，用户类型(user/admin)，AccessKey ID，AccessKey密钥，格式如下：\n'
         '/config <API节点HTTP访问地址> <用户类型> <AccessKey ID> <AccessKey密钥>'
     )
 
@@ -26,7 +26,7 @@ async def config(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text('格式错误！请发送 /config <API节点HTTP访问地址> <用户类型> <AccessKey ID> <AccessKey密钥>')
         return
     
-    api_url, user_type, accessKeyId, accessKey = context.args  # Renamed 'type' to 'user_type'
+    api_url, user_type, accessKeyId, accessKey = context.args
     user_id = update.message.from_user.id
     user_edge_info[user_id] = {'api_url': api_url, 'type': user_type, 'accessKeyId': accessKeyId, 'accessKey': accessKey}
     await update.message.reply_text('配置成功！请使用 /token 获取AccessToken。')
@@ -67,7 +67,7 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             # Store the token for further requests
             user_edge_info[user_id]['token'] = token
 
-            message = f"AccessToken：\n {token}"
+            message = f"AccessToken：\n{token}"
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
