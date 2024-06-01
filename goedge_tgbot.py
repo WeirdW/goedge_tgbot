@@ -3,6 +3,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 import json
+import os
 
 # 配置日志记录
 logging.basicConfig(
@@ -11,12 +12,23 @@ logging.basicConfig(
 )
 
 API_TOKEN = "7327775247:AAGB1JRnCqCVX4PYTXMYTiGx54sz-CCO-yo"
+USER_DATA_FILE = 'user_data.json'
 
 # 在这里定义全局变量来存储用户的Goedge CDN API信息
 user_edge_info = {}
 
 def bytes_to_mb(bytes_value):
     return bytes_value / (1024 * 1024)
+
+def load_user_data():
+    global user_edge_info
+    if os.path.exists(USER_DATA_FILE):
+        with open(USER_DATA_FILE, 'r') as file:
+            user_edge_info = json.load(file)
+
+def save_user_data():
+    with open(USER_DATA_FILE, 'w') as file:
+        json.dump(user_edge_info, file)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
@@ -32,6 +44,7 @@ async def config(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     api_url, user_type, accessKeyId, accessKey = context.args
     user_id = update.message.from_user.id
     user_edge_info[user_id] = {'api_url': api_url, 'type': user_type, 'accessKeyId': accessKeyId, 'accessKey': accessKey}
+    save_user_data()
     await update.message.reply_text('配置成功！请使用 /token 获取AccessToken。')
 
 async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -69,8 +82,9 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
             # Store the token for further requests
             user_edge_info[user_id]['token'] = token
+            save_user_data()
 
-            message = f"AccessToken：\n{token}"
+            message = f"AccessToken：\n {token}"
             await update.message.reply_text(message)
         except ValueError:
             await update.message.reply_text('解析响应失败，返回的不是有效的JSON格式。')
