@@ -47,7 +47,7 @@ async def get_AccessToken(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     "accessKey": accessKey
     }
     json_data=json.dumps(data)
-    headers={'Content-Type':'application/json'}) 
+    headers={'Content-Type':'application/json'}
     response = requests.post(f"{api_url}/APIAccessTokenService/getAPIAccessToken", data=json_data, headers=headers)
     
     # 打印调试信息
