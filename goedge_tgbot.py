@@ -11,7 +11,7 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-API_TOKEN = "7327775247:AAGB1JRnCqCVX4PYTXMYTiGx54sz-CCO-yo"
+API_TOKEN = "tg_api_token"
 USER_DATA_FILE = 'user_data.json'
 
 # 在这里定义全局变量来存储用户的Goedge CDN API信息
