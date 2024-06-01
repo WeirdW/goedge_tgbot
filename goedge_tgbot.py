@@ -141,38 +141,38 @@ async def get_ServerStatBoard(update: Update, context: ContextTypes.DEFAULT_TYPE
                 message += "\n当天流量统计:\n"
                 for item in stats['dailyTrafficStats']:
                     message += (
-                        f"日期: {item['day']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"缓存流量: {bytes_to_mb(item['cachedBytes']):.2f} MB, 请求数: {item['countRequests']}, "
-                        f"缓存请求数: {item['countCachedRequests']}, 攻击请求数: {item['countAttackRequests']}, "
-                        f"攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                        f"日期: {item.get('day', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
+                        f"缓存流量: {bytes_to_mb(item.get('cachedBytes', 0)):.2f} MB, 请求数: {item.get('countRequests', 'N/A')}, "
+                        f"缓存请求数: {item.get('countCachedRequests', 'N/A')}, 攻击请求数: {item.get('countAttackRequests', 'N/A')}, "
+                        f"攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
                     )
 
             if stats.get('hourlyTrafficStats'):
                 message += "\n小时流量统计:\n"
                 for item in stats['hourlyTrafficStats']:
                     message += (
-                        f"小时: {item['hour']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"缓存流量: {bytes_to_mb(item['cachedBytes']):.2f} MB, 请求数: {item['countRequests']}, "
-                        f"缓存请求数: {item['countCachedRequests']}, 攻击请求数: {item['countAttackRequests']}, "
-                        f"攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                        f"小时: {item.get('hour', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
+                        f"缓存流量: {bytes_to_mb(item.get('cachedBytes', 0)):.2f} MB, 请求数: {item.get('countRequests', 'N/A')}, "
+                        f"缓存请求数: {item.get('countCachedRequests', 'N/A')}, 攻击请求数: {item.get('countAttackRequests', 'N/A')}, "
+                        f"攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
                     )
 
             if stats.get('topNodeStats'):
                 message += "\n节点统计:\n"
                 for item in stats['topNodeStats']:
                     message += (
-                        f"节点ID: {item['nodeId']}, 节点名称: {item['nodeName']}, "
-                        f"请求数: {item['countRequests']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"攻击请求数: {item['countAttackRequests']}, 攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                        f"节点ID: {item.get('nodeId', 'N/A')}, 节点名称: {item.get('nodeName', 'N/A')}, "
+                        f"请求数: {item.get('countRequests', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
+                        f"攻击请求数: {item.get('countAttackRequests', 'N/A')}, 攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
                     )
 
             if stats.get('topCountryStats'):
                 message += "\n国家统计:\n"
                 for item in stats['topCountryStats']:
                     message += (
-                        f"国家: {item['countryName']}, 流量: {bytes_to_mb(item['bytes']):.2f} MB, "
-                        f"请求数: {item['countRequests']}, 流量占比: {item['percent']}%, "
-                        f"攻击请求数: {item['countAttackRequests']}, 攻击流量: {bytes_to_mb(item['attackBytes']):.2f} MB\n"
+                        f"国家: {item.get('countryName', 'N/A')}, 流量: {bytes_to_mb(item.get('bytes', 0)):.2f} MB, "
+                        f"请求数: {item.get('countRequests', 'N/A')}, 流量占比: {item.get('percent', 'N/A')}%, "
+                        f"攻击请求数: {item.get('countAttackRequests', 'N/A')}, 攻击流量: {bytes_to_mb(item.get('attackBytes', 0)):.2f} MB\n"
                     )
 
             await update.message.reply_text(message)
