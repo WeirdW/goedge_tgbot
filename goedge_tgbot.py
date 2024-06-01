@@ -9,9 +9,9 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-API_TOKEN = "TG BOT API TOKEN"
+API_TOKEN = "7327775247:AAGB1JRnCqCVX4PYTXMYTiGx54sz-CCO-yo"
 
-# 在这里定义全局变量来存储用户的哪吒监控信息
+# 在这里定义全局变量来存储用户的goedge cdn api信息
 user_edge_info = {}
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -76,8 +76,6 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("config", config))
     app.add_handler(CommandHandler("token", get_AccessToken))
-    app.add_handler(CommandHandler("all", get_all_servers))
-    app.add_handler(CommandHandler("id", get_server_by_id))
 
     app.run_polling()
 
